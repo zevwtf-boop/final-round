@@ -1,2 +1,2 @@
 // Set after backend deployment. Public URL only; never put the host key here.
-window.FINAL_ROUND_API = '';
+window.FINAL_ROUND_API = 'https://final-round-api.trickfn16.workers.dev';
