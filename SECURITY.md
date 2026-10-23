@@ -40,7 +40,7 @@ The app cannot reliably detect a second phone, external search, AI assistance, s
 
 ## Verification completed locally
 
-- Twelve automated tests pass for the scoring formula, final multiplier and announcement, single-use entries, closed lobby, hidden questions and live correctness, early/stale/duplicate/expired answers, approval/removal, private session requirements, durable-state reload, host/origin checks, malformed/oversized bodies and failed-code throttling.
+- Fourteen automated tests pass for the scoring formula, final multiplier and announcement, single-use entries, closed lobby, hidden questions and live correctness, early/stale/duplicate/expired answers, approval/removal, private session requirements, durable-state reload, host/origin checks, malformed/oversized bodies and failed-code throttling.
 - Two browser tabs completed a practice game: create lobby, generate code, join, approve, shared start, shuffled options, locked answer, reveal, leaderboard, final announcement, final answer and final standings.
 - Public GitHub Pages deployment loaded with the city design and host editor. Phone-sized rendering at 390 × 844 had no horizontal overflow.
 - The local backend test uses a simulated Durable Object host. Real Cloudflare multiplayer operation, provider quotas and an attendance-sized rehearsal must be verified separately.
@@ -48,3 +48,7 @@ The app cannot reliably detect a second phone, external search, AI assistance, s
 ## Before opening a real giveaway
 
 Confirm the live backend deployment, runtime host secret, exact allowed frontend origin and frontend API URL. Run a full game from two independent devices. Try an invalid and reused code, rejected duplicate answer, expired answer and reconnect. Verify a final-question score and export. Rehearse at the expected attendance and check provider usage. Announce V-Bucks amount, delivery method, eligibility and tie procedure. Never request an Epic Games password or verification code.
+
+## Latest additions
+
+Name and Discord username are separate fields. Discord usernames are unique within a room and are returned only to authenticated hosts. Public standings contain at most five names; each player can still see their own final rank. Exact ties share a rank and are flagged for host review. The private 19-question bank is excluded from public GitHub. City Radio is an original synthesized instrumental with explicit play/pause and volume controls; it becomes quieter during timed questions. Static assets use explicit release versions to prevent stale form scripts. Public backend version-preview URLs are disabled in the deployment configuration.
