@@ -16,7 +16,7 @@ class Engine {
     return {title:String(title).slice(0,80),questions:validateQuestions(questions),phase:'lobby',index:-1,players:[],entries:[],started:0,deadline:0,round:null};
   }
   tick(now) { if(this.s.phase==='question'&&now>=this.s.deadline) this.s.phase='reveal'; }
-  join(name,entry) {
+  join(name,entry,discord) {
     const s=this.s;
     if(s.phase!=='lobby') fail('The lobby is closed.',409);
     if(typeof name==='string')name=name.normalize('NFKC').trim();
@@ -24,9 +24,12 @@ class Engine {
     if(s.players.some(p=>p.name.toLowerCase()===name.toLowerCase())) fail('That display name is taken.',409);
     const code=s.entries.find(c=>c.code===entry&&!c.used);
     if(!code) fail('Entry code is invalid or already used.',403);
+    if(typeof discord!=='string'||!/^[a-zA-Z0-9_.]{2,32}(#[0-9]{4})?$/.test(discord.trim()))fail('Enter your Discord username, not your display name.');
+    discord=discord.trim().toLowerCase();
+    if(s.players.some(p=>p.discord===discord))fail('That Discord username is already registered.',409);
     if(s.players.length>=200) fail('Room is full.',409);
     code.used=true;
-    const p={id:token(),name,approved:false,removed:false,score:0,correct:0,elapsed:0,answers:{},order:[]};
+    const p={id:token(),name,discord,approved:false,removed:false,score:0,correct:0,elapsed:0,answers:{},order:[]};
     s.players.push(p);return p;
   }
   player(id) { const p=this.s.players.find(p=>p.id===id&&!p.removed);if(!p)fail('Player session unavailable.',401);return p; }
@@ -62,12 +65,14 @@ class Engine {
       const q=s.questions[s.index];v.question={text:q.text,answers:host?q.answers:p.order.map(i=>q.answers[i]),round:s.round,final:s.index===s.questions.length-1};
     }
     if(['reveal','finished'].includes(s.phase)) {
-      v.leaderboard=s.players.filter(p=>p.approved&&!p.removed).sort((a,b)=>b.score-a.score||b.correct-a.correct||a.elapsed-b.elapsed||a.name.localeCompare(b.name)).map(p=>({name:p.name,score:p.score,correct:p.correct,elapsed:p.elapsed}));
+      v.leaderboard=s.players.filter(p=>p.approved&&!p.removed).sort((a,b)=>b.score-a.score||b.correct-a.correct||a.elapsed-b.elapsed||a.name.localeCompare(b.name)).map(p=>({name:p.name,...(host?{discord:p.discord}:{}),score:p.score,correct:p.correct,elapsed:p.elapsed}));
       const same=(a,b)=>a&&b&&a.score===b.score&&a.correct===b.correct&&a.elapsed===b.elapsed;
       v.leaderboard.forEach((p,i,all)=>{p.rank=i&&same(p,all[i-1])?all[i-1].rank:i+1;p.tied=Boolean(same(p,all[i-1])||same(p,all[i+1]));});
+      if(p)v.me.rank=v.leaderboard.find(entry=>entry.name===p.name)?.rank;
+      if(!host)v.leaderboard=v.leaderboard.slice(0,5);
       if(s.index>=0){v.correct=s.questions[s.index].answers[s.questions[s.index].correct];if(p)v.result=p.answers[s.index]||null;}
     }
-    if(host){v.roster=s.players.map(p=>({id:p.id,name:p.name,approved:p.approved,removed:p.removed,score:p.score}));v.entries=s.entries;v.answerCount=s.players.filter(p=>p.approved&&!p.removed&&Object.hasOwn(p.answers,s.index)).length;}
+    if(host){v.roster=s.players.map(p=>({id:p.id,name:p.name,discord:p.discord,approved:p.approved,removed:p.removed,score:p.score}));v.entries=s.entries;v.answerCount=s.players.filter(p=>p.approved&&!p.removed&&Object.hasOwn(p.answers,s.index)).length;}
     return v;
   }
 }
@@ -116,7 +121,7 @@ export class QuizRoom {
           const rates=(await this.ctx.storage.get('join-rates')||[]).filter(r=>r.until>now);
           let rate=rates.find(r=>r.key===b.clientKey);
           if(rate?.count>=20)fail('Too many unsuccessful entries. Wait one minute and try again.',429);
-          try{const p=e.join(b.name,b.entry);result={player:p.id};}
+          try{const p=e.join(b.name,b.entry,b.discord);result={player:p.id};}
           catch(error){if(!rate){rate={key:b.clientKey,count:0,until:now+60000};rates.push(rate);}rate.count++;await this.ctx.storage.put('join-rates',rates.slice(-1024));throw error;}
         }
         else if(action==='entries'){if(s.phase!=='lobby')fail('Entries are locked.',409);if(s.entries.length>=200)fail('Entry limit reached.');const n=Math.min(200-s.entries.length,Math.max(1,Number(b.count)||1));for(let i=0;i<n;i++)s.entries.push({code:token().slice(0,12).toUpperCase(),used:false});}
