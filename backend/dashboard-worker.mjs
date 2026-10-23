@@ -63,6 +63,8 @@ class Engine {
     }
     if(['reveal','finished'].includes(s.phase)) {
       v.leaderboard=s.players.filter(p=>p.approved&&!p.removed).sort((a,b)=>b.score-a.score||b.correct-a.correct||a.elapsed-b.elapsed||a.name.localeCompare(b.name)).map(p=>({name:p.name,score:p.score,correct:p.correct,elapsed:p.elapsed}));
+      const same=(a,b)=>a&&b&&a.score===b.score&&a.correct===b.correct&&a.elapsed===b.elapsed;
+      v.leaderboard.forEach((p,i,all)=>{p.rank=i&&same(p,all[i-1])?all[i-1].rank:i+1;p.tied=Boolean(same(p,all[i-1])||same(p,all[i+1]));});
       if(s.index>=0){v.correct=s.questions[s.index].answers[s.questions[s.index].correct];if(p)v.result=p.answers[s.index]||null;}
     }
     if(host){v.roster=s.players.map(p=>({id:p.id,name:p.name,approved:p.approved,removed:p.removed,score:p.score}));v.entries=s.entries;v.answerCount=s.players.filter(p=>p.approved&&!p.removed&&Object.hasOwn(p.answers,s.index)).length;}
