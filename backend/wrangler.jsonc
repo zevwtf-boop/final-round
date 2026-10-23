@@ -1,5 +1,5 @@
 {
-  "name": "steep-band-230ffinal-round-api",
+  "name": "final-round-api",
   "main": "dashboard-worker.mjs",
   "compatibility_date": "2026-10-23",
   "durable_objects": {"bindings": [{"name": "ROOMS", "class_name": "QuizRoom"}]},
