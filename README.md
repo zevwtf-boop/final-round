@@ -8,7 +8,7 @@ The host supplies the prize and runs the event. No Epic Games credentials, payme
 
 ## Play
 
-Use the room PIN and personal entry code from the host. Choose a display name, join and wait for approval. Answer once per round before the timer expires. Correct answers earn up to 1,000 points based on server receipt time. The last question offers up to 2,000 points after a separate finale announcement.
+Use the room PIN and personal entry code from the host. Enter your name and Discord username, then wait for host approval. Your Discord handle is shared only with the host. Answer once per round before the timer expires. Correct answers earn up to 1,000 points based on server receipt time. The last question offers up to 2,000 points after a separate finale announcement.
 
 ## Host
 
@@ -23,3 +23,7 @@ GitHub Pages publishes `/docs` from `main`. Cloudflare Workers Builds deploys `/
 ## Security
 
 Read [SECURITY.md](SECURITY.md) for the threat model, implemented defenses, test evidence and launch checks. Server scoring, single-use entry codes, host approval and locked answers reduce cheating opportunities. No public quiz can prevent outside help, second devices or collusion. Rehearse with the intended attendance and check hosting quotas before awarding a prize.
+
+## City Radio
+
+Use the music dock to start or pause the original after-hours instrumental and adjust its volume. Timed questions automatically reduce the music level. Playback begins only after a player clicks the music control, in line with browser autoplay rules.
