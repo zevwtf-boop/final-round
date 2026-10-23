@@ -1,0 +1,8 @@
+{
+  "name": "steep-band-230ffinal-round-api",
+  "main": "dashboard-worker.mjs",
+  "compatibility_date": "2026-10-23",
+  "durable_objects": {"bindings": [{"name": "ROOMS", "class_name": "QuizRoom"}]},
+  "migrations": [{"tag": "v1", "new_sqlite_classes": ["QuizRoom"]}],
+  "vars": {"ALLOWED_ORIGIN": "https://zevwtf-boop.github.io"}
+}
